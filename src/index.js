@@ -13,14 +13,23 @@ import styles from './styles';
 export default class App extends Component {
   state = {
     isModalVisible: false,
+    markers: [],
   }
 
   toggleModal = () => this.setState({ isModalVisible: !this.state.isModalVisible });
 
+  createMarker = (event) => {
+    this.setState({
+      markers: [
+        ...this.state.markers, { latlng: event.nativeEvent.coordinate },
+      ],
+    });
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <MapView onLongPress={(event) => {this.toggleModal()}}
+        <MapView onLongPress={(event) => { this.createMarker(event) }}
           style={styles.map}
           region={{
             latitude: -27.2177659,
@@ -29,6 +38,11 @@ export default class App extends Component {
             longitudeDelta: 0.0031,
           }}
         >
+          {this.state.markers.map(marker => (
+            <MapView.Marker
+              coordinate={marker.latlng}
+            />
+          ))}
         </MapView>
         <Modal
           style={styles.modal}
